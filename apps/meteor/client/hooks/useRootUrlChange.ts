@@ -8,7 +8,7 @@ import UrlChangeModal from '../components/UrlChangeModal';
 import { imperativeModal } from '../lib/imperativeModal';
 import { isSyncReady } from '../lib/userData';
 
-export const useRootUrlChange = (userId: string) => {
+export const useRootUrlChange = () => {
 	const { t } = useTranslation();
 	const dispatchToastMessage = useToastMessageDispatch();
 	const isAdmin = useRole('admin');
@@ -70,5 +70,5 @@ export const useRootUrlChange = (userId: string) => {
 				imperativeModal.close();
 			}
 		};
-	}, [currentUrl, documentDomain, siteUrlMutation, siteUrl, userId, isAdmin]);
+	}, [currentUrl, documentDomain, siteUrlMutation, siteUrl, isAdmin]);
 };
