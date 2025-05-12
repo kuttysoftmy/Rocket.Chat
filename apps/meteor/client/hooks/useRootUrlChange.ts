@@ -29,13 +29,14 @@ export const useRootUrlChange = () => {
 	});
 
 	useEffect(() => {
-		if (!Roles.ready.get() || !isSyncReady.get()) {
-			return;
-		}
 		if (!firstRun.current) {
 			return;
 		}
 		firstRun.current = false;
+
+		if (!Roles.ready.get() || !isSyncReady.get()) {
+			return;
+		}
 
 		if (!isAdmin) {
 			return;
@@ -45,30 +46,33 @@ export const useRootUrlChange = () => {
 			return;
 		}
 
-		if (window.__meteor_runtime_config__.ROOT_URL.replace(/\/$/, '') !== currentUrl) {
-			const confirm = (): void => {
-				imperativeModal.close();
-				siteUrlMutation.mutate(currentUrl);
-			};
-			imperativeModal.open({
+		if (window.__meteor_runtime_config__.ROOT_URL.replace(/\/$/, '') === currentUrl) {
+			return;
+		}
+
+		const onConfirm = (): void => {
+			imperativeModal.close();
+			siteUrlMutation.mutate(currentUrl);
+		};
+
+		const openModal = () => {
+			return imperativeModal.open({
 				component: UrlChangeModal,
 				props: {
-					onConfirm: confirm,
+					onConfirm,
 					siteUrl,
 					currentUrl,
 					onClose: imperativeModal.close,
 				},
 			});
-		}
+		};
 
 		if (documentDomain) {
 			window.document.domain = documentDomain;
 		}
 
 		return () => {
-			if (window.__meteor_runtime_config__.ROOT_URL.replace(/\/$/, '') !== currentUrl) {
-				imperativeModal.close();
-			}
+			openModal();
 		};
 	}, [currentUrl, documentDomain, siteUrlMutation, siteUrl, isAdmin]);
 };
